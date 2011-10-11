@@ -2335,6 +2335,9 @@ proc makewindow {} {
     if {$have_tk85} {
 	$ctext conf -tabstyle wordprocessor
     }
+    catch {eval font create linenofont [font configure textfont] \
+	       -size [expr {[font configure textfont -size] - 2}]}
+    $ctext tag configure lineno -foreground #808080 -font linenofont
     ${NS}::scrollbar .bleft.bottom.sb -command "$ctext yview"
     ${NS}::scrollbar .bleft.bottom.sbhorizontal -command "$ctext xview" -orient h
     pack .bleft.top -side top -fill x
@@ -7446,7 +7449,7 @@ proc getblobline {bf id} {
     $ctext config -state normal
     set nl 0
     while {[incr nl] <= 1000 && [gets $bf line] >= 0} {
-	$ctext insert end "$line\n"
+	$ctext insert end $nl lineno "\t" {} "$line\n"
     }
     if {[eof $bf]} {
 	global jump_to_here ctext_file_names commentend
